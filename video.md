@@ -1,25 +1,25 @@
 # Video-LLM
 ## Slow-Fast技术调研
 ### Kwai Keye-VL 1.5 Technical Report
-* 架构
+#### 1. 架构
   * Qwen3-8B和SigLIP-400M-384-14做热启
   * 快慢帧技术，如果本帧和上一帧变化不超过95%就是快帧，否则为慢帧（第一帧是永远是慢帧），本质上就是慢帧高分，快帧低分来在总token预算下实现训练。
 <img width="1489" height="405" alt="image" src="https://github.com/user-attachments/assets/28bc3c7b-e7c6-43ad-8142-6ba104e273f6" />
 
-* 配置
+#### 2. 配置
   * 视觉token数量为20K（没有时序融合，同时patch size为14，视频总最大像素数为16056320）
   * 快慢帧会有特殊token进行标记
-* 数据
+#### 3. 数据
   * 视频来自多样化的开源数据集（ShareGPT4V、Pandas等）和大规模高质量的内部视频数据。
   * 打标方案（0.5-1-2的fps来进行打标）
   * Frame-level OCR任务：（1）打乱视频帧，模型需要预测顺序（不过这个可能对带有时间戳的模型不重要）。（2）给一组相关的video，识别出相关的。
-* 预训练-总共4阶段
+#### 4. 预训练-总共4阶段
   * 第一阶段-ViT预训练（只训练ViT），第二阶段跨模态预训练（只训练MLP Projector，8K长度）
   * 第三阶段-多任务预训练（我们的scope）
     * 8K长度，数据包含常见视觉语言任务，包括图像字幕、光学字符识别 (OCR)、接地、视觉问答 (VQA) 和交错的图像文本数据。
   * 第四阶段-退火（我们的scope）
     * 长度从8K扩展到128K，context并行训练。数据比例24% videos+50% images+26%纯文
-* 后训练-总共5阶段
+#### 5. 后训练-总共5阶段
   * Non-Reasoning阶段
     * SFT
       * 总共7.5M的数据，对每个sample roll出来多个轨迹，如果正确率太高就筛掉。
