@@ -5,6 +5,7 @@
   * Qwen3-8B和SigLIP-400M-384-14做热启
   * 快慢帧技术，如果本帧和上一帧变化不超过95%就是快帧，否则为慢帧（第一帧是永远是慢帧），本质上就是慢帧高分，快帧低分来在总token预算下实现训练。
 <img width="1489" height="405" alt="image" src="https://github.com/user-attachments/assets/28bc3c7b-e7c6-43ad-8142-6ba104e273f6" />
+
 * 配置
   * 视觉token数量为20K（没有时序融合，同时patch size为14，视频总最大像素数为16056320）
   * 快慢帧会有特殊token进行标记
